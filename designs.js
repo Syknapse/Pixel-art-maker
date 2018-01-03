@@ -15,40 +15,80 @@ const pixelCanvas = $('#pixel-canvas');
 const rows = '<tr></tr>';
 const columns = '<td></td>';
 
+// Reset page
+function reset(){
+    clearGrid();
+    colorInput.val('#000000');
+    inputHeight.val(10);
+    inputWidth.val(10);
+}
+
 // Grid: Clear grid function
 function clearGrid(){
     pixelCanvas.children().remove();
 }
 
 // Grid: Make grid
-function makeGrid() {
+function makeGrid(){
+    clearGrid();
     // Grid: Grab size value
-    let gridWidth = Number($('#input-width').val());
-    let gridHeight = Number($('#input-height').val());
+    let gridWidth = inputWidth.val();
+    let gridHeight = inputHeight.val();
     // Grid: Append to table
     // Create rows
-    for(let i = 0; i <= gridHeight; i++){
+    for(let i = 1; i <= gridHeight; i++){
         pixelCanvas.append(rows);
     }
     // Create columns
-    for(let j = 0; j <= gridWidth; j++){
+    for(let j = 1; j <= gridWidth; j++){
         pixelCanvas.children().append(columns);
     }
 }
 
-// Grid: Event listener Reset grid
-resetBtn.click(clearGrid);
-// Grid: Event listener clear previous grid on click
-submitGridSize.mousedown(clearGrid);
+
+// Event listener Reset page
+resetBtn.click(reset);
 // Grid: Event listener make new grid on click
-submitGridSize.mouseup(makeGrid);
-// Grid: Event listener click on number input
-inputHeight.click(clearGrid);
-inputHeight.click(makeGrid);
-inputWidth.click(clearGrid);
-inputWidth.click(makeGrid);
+submitGridSize.click(makeGrid);
 
+// Grid: add/remove row/column
+const addRowBtn = $('#add-row');
+const removeRowBtn = $('#remove-row');
+const addColumnBtn = $('#add-column');
+const removeColumnBtn = $('#remove-column');
 
+function increment (i, val) {
+    return val*1+1
+}
+
+function decrement (i, val) {
+    return val*1-1
+}
+
+// function test (param){
+//     inputHeight.val(param);
+//     makeGrid();
+// }
+
+addRowBtn.click(function(){
+    inputHeight.val(increment);
+    makeGrid();
+});
+
+removeRowBtn.click(function(){
+    inputHeight.val(decrement);
+    makeGrid();
+});
+
+addColumnBtn.click(function(){
+    inputWidth.val(increment);
+    makeGrid();
+});
+
+removeColumnBtn.click(function(){
+    inputWidth.val(decrement);
+    makeGrid();
+});
 
 // Draw: Grab color input
 colorInput.change(function(){
