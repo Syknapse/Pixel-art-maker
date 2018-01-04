@@ -40,7 +40,7 @@ input[type=number] {
 }
 
 input:invalid+span:after {
-    content: '✖';
+    content: '✖ (150 max)';
     padding-left: 5px;
   }
 

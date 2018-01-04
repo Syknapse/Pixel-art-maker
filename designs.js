@@ -3,8 +3,8 @@ const submitGridSize = $('#submit-grid');
 // Select Reset button
 const resetBtn = $('#reset');
 // Select height and width input
-const inputHeight = $('#input-height');
-const inputWidth = $('#input-width');
+const inputRows = $('#input-rows');
+const inputColumns = $('#input-columns');
 // Select color input
 const colorInput = $('#color-picker');
 // Store selected color
@@ -12,97 +12,143 @@ let selectedColor = colorInput.val();
 // Select table
 const pixelCanvas = $('#pixel-canvas');
 // Rows and columns
-const rows = '<tr></tr>';
-const columns = '<td></td>';
+const row = '<tr></tr>';
+const column = '<td></td>';
 
-// Reset page
+// RESET page
 function reset(){
     clearGrid();
     colorInput.val('#000000');
-    inputHeight.val(10);
-    inputWidth.val(10);
+    inputRows.val(10);
+    inputColumns.val(10);
 }
+// Event listener Reset page
+resetBtn.click(reset);
 
-// Grid: Clear grid function
+// GRID
+// Clear grid function
 function clearGrid(){
     pixelCanvas.children().remove();
 }
 
-// Grid: Make grid
+// Make grid
 function makeGrid(){
     clearGrid();
-    // Grid: Grab size value
-    let gridWidth = inputWidth.val();
-    let gridHeight = inputHeight.val();
-    // Grid: Append to table
-    // Create rows
-    for(let i = 1; i <= gridHeight; i++){
-        pixelCanvas.append(rows);
-    }
-    // Create columns
-    for(let j = 1; j <= gridWidth; j++){
-        pixelCanvas.children().append(columns);
+    // Grab size value
+    let gridRows = inputRows.val();
+    let gridColumns = inputColumns.val();
+    // Append to table if input is 150 or less
+    if (gridRows <= 150 && gridColumns <= 150){
+        // Create rows
+        for(let i = 1; i <= gridRows; i++){
+            pixelCanvas.append(row);
+        }
+        // Create columns
+        for(let j = 1; j <= gridColumns; j++){
+            pixelCanvas.children().append(column);
+        }
     }
 }
 
-
-// Event listener Reset page
-resetBtn.click(reset);
-// Grid: Event listener make new grid on click
+// Event listener make new grid on click
 submitGridSize.click(makeGrid);
 
-// Grid: add/remove row/column
+// GRID BUILDER
+// Add/remove row/column
 const addRowBtn = $('#add-row');
 const removeRowBtn = $('#remove-row');
 const addColumnBtn = $('#add-column');
 const removeColumnBtn = $('#remove-column');
 
+// increment/decrement row and column input
 function increment (i, val) {
-    return val*1+1
+    return +val +1;
 }
 
 function decrement (i, val) {
-    return val*1-1
+    return +val -1;
 }
 
-// function test (param){
-//     inputHeight.val(param);
-//     makeGrid();
-// }
-
-addRowBtn.click(function(){
-    inputHeight.val(increment);
+// Build grid. scale = increment or decrement. axis = row or column
+function gridBuilder (scale, axis){
+    axis.val(scale);
     makeGrid();
+}
+
+// Grid-building buttons event listeners
+addRowBtn.click(function(){
+    gridBuilder(increment, inputRows);
 });
 
 removeRowBtn.click(function(){
-    inputHeight.val(decrement);
-    makeGrid();
+    gridBuilder(decrement, inputRows);
 });
 
 addColumnBtn.click(function(){
-    inputWidth.val(increment);
-    makeGrid();
+    gridBuilder(increment, inputColumns);
 });
 
 removeColumnBtn.click(function(){
-    inputWidth.val(decrement);
-    makeGrid();
+    gridBuilder(decrement, inputColumns);
 });
 
-// Draw: Grab color input
+// DRAW
+// Grab color input on change
 colorInput.change(function(){
     selectedColor = $(this).val();
 });
-// Draw: Event listener click
-pixelCanvas.on('click', 'td', function(){
-    // Draw: Change background color of table cell
-    $(this).css('background-color', selectedColor);
-});
+
+// draw/erase function
+function draw (){
+    let clicks = $(this).data('clicks');
+    if (!clicks){
+        // Change background color of cell
+        $(this).css('background-color', selectedColor);
+    } else {
+        // On second click return color to default (erase)
+        $(this).css('background-color', '');
+    }
+    // Fire `if` event on odd clicks
+    $(this).data('clicks', !clicks);
+}
+
+// click and drag draw/erase function
+function drag () {
+    let mouseIsDown = true;
+    let clicks = $(this).data('clicks');
+    $('td')
+        .on('mousemove', function() {
+            if (mouseIsDown) {
+                if (!clicks){
+                    $(this).css('backgroundColor', selectedColor);
+                } else {
+                    // On second click return color to default (erase)
+                    $(this).css('background-color', '');
+                }
+                // Fire `if` event on odd clicks
+                $(this).data('clicks', !clicks);
+            }
+        })
+        .on('mousedown', function() {
+            event.preventDefault();
+            mouseIsDown = true;
+        })
+        .on('mouseup', function() {
+            mouseIsDown = false;
+        });
+    pixelCanvas.on('mouseleave', function() {
+        mouseIsDown = false;
+    });
+}
+
+// Event listener click delegated
+pixelCanvas
+    .on('click', 'td', draw)
+    .on('mousedown', 'td', drag);
 
 
-// Extra features: Click and drag
-// Extra features: Eraser
+
+
 // Extra features: Reset and/or clear grid
 // Extra features: Screenshot
 // Extra features: Tweet creation/ project

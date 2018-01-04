@@ -9,23 +9,29 @@
 <body>
     <h1>Pixel Art Maker</h1>
 
-    <h2>Create Your Grid</h2>
-    <label for="#add-row">Add Row</label> <button type="button" id="add-row">+</button>
-    <label for="#remove-row">Remove Row</label> <button type="button" id="remove-row">-</button>
-    <label for="#add-column">Add Column</label> <button type="button" id="add-column">+</button>
-    <label for="#remove-column">Remove Column</label> <button type="button" id="remove-column">-</button>
+    <h2>Build Your Grid</h2>
+    <label>Row
+        <button type="button" id="remove-row">-</button>
+        <button type="button" id="add-row">+</button>
+    </label>
+    <label>Column
+        <button type="button" id="remove-column">-</button>
+        <button type="button" id="add-column">+</button>
+    </label>
+
+    <p>Or</p>
 
     <h2>Choose Grid Size</h2>
     <form id="size-picker">
-        Grid Height:
-        <input type="number" id="input-height" name="height" min="1" max="150" value="10">
+        Rows:
+        <input type="number" id="input-rows" name="height" min="1" max="150" value="10">
         <span class="validity"></span>
-        Grid Width:
-        <input type="number" id="input-width" name="width" min="1" max="150" value="10">
+        Columns:
+        <input type="number" id="input-columns" name="width" min="1" max="150" value="10">
         <span class="validity"></span>
         <button type="button" id="submit-grid">Create Grid</button>
-        <button type="button" id="reset">Reset</button>
     </form>
+    <button type="button" id="reset">Reset</button>
 
     <h2>Pick A Color</h2>
     <input type="color" id="color-picker">
