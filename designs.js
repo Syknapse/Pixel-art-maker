@@ -19,6 +19,7 @@ const column = '<td></td>';
 function reset(){
     clearGrid();
     colorInput.val('#000000');
+    selectedColor = colorInput.val();
     inputRows.val(10);
     inputColumns.val(10);
 }
@@ -40,11 +41,11 @@ function makeGrid(){
     // Append to table if input is 150 or less
     if (gridRows <= 150 && gridColumns <= 150){
         // Create rows
-        for(let i = 1; i <= gridRows; i++){
+        for(let r = 1; r <= gridRows; r++){
             pixelCanvas.append(row);
         }
         // Create columns
-        for(let j = 1; j <= gridColumns; j++){
+        for(let c = 1; c <= gridColumns; c++){
             pixelCanvas.children().append(column);
         }
     }
@@ -61,11 +62,11 @@ const addColumnBtn = $('#add-column');
 const removeColumnBtn = $('#remove-column');
 
 // increment/decrement row and column input
-function increment (i, val) {
+function increment (i, val){
     return +val +1;
 }
 
-function decrement (i, val) {
+function decrement (i, val){
     return +val -1;
 }
 
@@ -117,26 +118,27 @@ function drag () {
     let mouseIsDown = true;
     let clicks = $(this).data('clicks');
     $('td')
-        .on('mousemove', function() {
-            if (mouseIsDown) {
-                if (!clicks){
-                    $(this).css('backgroundColor', selectedColor);
-                } else {
-                    // On second click return color to default (erase)
-                    $(this).css('background-color', '');
-                }
-                // Fire `if` event on odd clicks
-                $(this).data('clicks', !clicks);
+    .on('mouseleave', function(){
+        if (mouseIsDown){
+            if (!clicks){
+                // Change background color of cell
+                $(this).css('backgroundColor', selectedColor);
+            } else {
+                // On second click return color to default (erase)
+                $(this).css('background-color', '');
             }
-        })
-        .on('mousedown', function() {
+            // Fire `if` event on odd clicks
+            $(this).data('clicks', !clicks);
+        }
+    })
+    .on('mousedown', function(){
             event.preventDefault();
             mouseIsDown = true;
         })
-        .on('mouseup', function() {
+        .on('mouseup', function(){
             mouseIsDown = false;
         });
-    pixelCanvas.on('mouseleave', function() {
+    pixelCanvas.on('mouseleave', function(){
         mouseIsDown = false;
     });
 }
@@ -147,6 +149,26 @@ pixelCanvas
     .on('mousedown', 'td', drag);
 
 
+
+// This can log the individual cell clicked, as well as the start and end cell on drag. It serves no purpose in this project any longer. But I made it, and it works, so it's staying here for now!!
+
+/* pixelCanvas.on('mousedown', 'td', function(){
+                let startCell = currentCell(this);
+                event.preventDefault();
+                console.log(startCell);
+            })
+            .on('mouseup', 'td', function(){
+                let endCell = currentCell(this);
+                console.log(endCell);
+            });
+
+function currentCell (current){
+    let columnIndex  = current.cellIndex;
+    let rowIndex = current.parentNode.rowIndex;
+    let cellIndex = `${rowIndex}-${columnIndex}`;
+    return cellIndex;
+}
+*/
 
 
 // Extra features: Reset and/or clear grid
