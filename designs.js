@@ -55,6 +55,27 @@ function makeGrid(){
 submitGridSize.click(makeGrid);
 
 // GRID BUILDER
+
+//////////////////////////////////////
+/*
+// Option with disabled typing in number input
+function reset(){
+    clearGrid();
+    colorInput.val('#000000');
+    selectedColor = colorInput.val();
+    inputRows.val(10);
+    inputColumns.val(10);
+    makeGrid();
+}
+
+// Start with a 10x10 grid
+makeGrid();
+// Disable inputting numbers
+$("[type='number']").keypress(function (evt) {
+    evt.preventDefault();
+}); */
+
+
 // Add/remove row/column
 const addRowBtn = $('#add-row');
 const removeRowBtn = $('#remove-row');
@@ -70,10 +91,30 @@ function decrement (i, val){
     return +val -1;
 }
 
-// Build grid. scale = increment or decrement. axis = row or column
+// Build grid & update input. scale = increment or decrement. axis = row or column
 function gridBuilder (scale, axis){
     axis.val(scale);
-    makeGrid();
+    buildGrid(scale, axis);
+}
+
+////////////////////////////////////////////////////
+// This function adds a row without resetting the grid (painting persists), adds a column (but doesn't appear if row=0), the remove function is not yet implemented
+// the main issue is that inputting numbers manually puts the Btns out of sync with the actual input
+function buildGrid(scale, axis){
+    if (scale === increment && axis === inputRows){
+        const addRow = $("<tr></tr>");
+        pixelCanvas.append(addRow);
+        for(let c = 1; c <= inputColumns.val(); c++){
+            const addColumn = $("<td></td>");
+            addRow.append(addColumn);
+        }
+    } else if (scale === decrement && axis === inputRows){
+        row.remove();
+    } else if (scale === increment && axis === inputColumns){
+        pixelCanvas.children().append(column);
+    } else {
+       column.remove();
+    }
 }
 
 // Grid-building buttons event listeners
@@ -148,6 +189,20 @@ pixelCanvas
     .on('click', 'td', draw)
     .on('mousedown', 'td', drag);
 
+
+
+// convert rgb to hex on click
+/* let thisHex = pixelCanvas.on('click', 'td', function(){
+    rgbToHex( $(this).css('background-color') );
+
+});
+function rgbToHex(rgb){
+    rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+    return (rgb && rgb.length === 4) ? "#" +
+     ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+     ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+     ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+} */
 
 
 // This can log the individual cell clicked, as well as the start and end cell on drag. It serves no purpose in this project any longer. But I made it, and it works, so it's staying here for now!!
