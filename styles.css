@@ -1,15 +1,17 @@
 body {
     text-align: center;
+    font-family: 'Gloria Hallelujah', cursive;
 }
 
 h1 {
-    font-family: Monoton;
-    font-size: 70px;
+    font-family: 'Gloria Hallelujah', cursive;
+    font-size: 50px;
     margin: 0.2em;
 }
 
 h2 {
-    margin: 1em 0 0.25em;
+    /* margin: 0.5em 0 0.25em; */
+    font-size: 0.9em;
 }
 
 h2:first-of-type {
@@ -25,6 +27,7 @@ td {
 table {
     border-collapse: collapse;
     margin: 0 auto;
+    max-width: 96%;
 }
 
 tr {
@@ -36,15 +39,73 @@ td {
 }
 
 input[type=number] {
-    width: 6em;
+    width: 3em;
+}
+
+button {
+    font-family: 'Gloria Hallelujah', cursive;
+    background-color: rgb(245, 255, 245);
+    border-radius: 30px;
+    border: 2px solid black;
+}
+
+.builder {
+    width: 300px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.builder button {
+    width: 80px;
+}
+
+.builder div {
+    width: 60px;
+    margin-right: 5px;
 }
 
 input:invalid+span:after {
-    content: '✖ (150 max)';
+    content: '✖ (min 1, max 150)';
     padding-left: 5px;
   }
 
 input:valid+span:after {
     content: '✓';
     padding-left: 5px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls > * {
+    margin: 0.5em;
+}
+
+#submit-grid,
+#reset {
+    width: 160px;
+}
+
+#color-picker {
+    height: 50px;
+    width: 50px;
+}
+
+footer {
+    margin-top: 20%;
+    font-size: 0.8em;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+
+@media screen and (max-width: 780px){
+    h1 {
+        font-size: 40px;
+    }
 }
