@@ -91,10 +91,15 @@ function decrement (i, val){
     return +val -1;
 }
 
+// This with test = axis.val(); executed in gridBuilder, means the value of button and input are now always the same. maybe add btn param to make it work for all four buttons
+let test = addRowBtn.val();
+
 // Build grid & update input. scale = increment or decrement. axis = row or column
 function gridBuilder (scale, axis){
     axis.val(scale);
     buildGrid(scale, axis);
+    test = axis.val();
+    console.log(test);
 }
 
 ////////////////////////////////////////////////////
