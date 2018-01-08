@@ -92,14 +92,27 @@ function decrement (i, val){
 }
 
 ////////////// difference between input and actual table
-let gridRows = inputRows.val();
-let currentGridRows = 0;
-let rowsDiff = gridRows - currentGridRows;
-
+// This function executed at the start of buildGrid finds the difference between the number of rows indicated in the input vs the actual current number of rows just before building. rowsDiff is then used as the number of loops to build. in effect it adds a single row when they match or as many as needed when they don't
+let rowsDiff = 0;
+let columnsDiff = 0;
 function countRows(){
+    let currentGridRows = 0;
+    let gridRows = inputRows.val();
     currentGridRows = pixelCanvas.children('tr').length;
+    rowsDiff = gridRows - currentGridRows;
     console.log(currentGridRows);
+    console.log(gridRows);
     console.log(rowsDiff);
+}
+//////////////
+function countColumns(){
+    let currentGridColumns = 0;
+    let gridColumns = inputColumns.val();
+    currentGridColumns = pixelCanvas.children('td').length; //////////////
+    columnDiff = gridColumns - currentGridColumns;
+    // console.log(currentGridRows);
+    // console.log(gridRows);
+    // console.log(rowsDiff);
 }
 
 
@@ -111,7 +124,6 @@ function gridBuilder (scale, axis){
     axis.val(scale);
     buildGrid(scale, axis);
     test = axis.val();
-    countRows();
     // console.log(test);
 }
 
@@ -119,19 +131,22 @@ function gridBuilder (scale, axis){
 // This function adds a row without resetting the grid (painting persists), adds a column (but doesn't appear if row=0), the remove function is not yet implemented
 // the main issue is that inputting numbers manually puts the Btns out of sync with the actual input
 function buildGrid(scale, axis){
+    countRows();
     if (scale === increment && axis === inputRows){
-        const addRow = $("<tr></tr>");
-        pixelCanvas.append(addRow);
-        for(let c = 1; c <= inputColumns.val(); c++){
-            const addColumn = $("<td></td>");
-            addRow.append(addColumn);
+        for (let r = 1; r <= rowsDiff; r++){
+            const addRow = $("<tr></tr>");
+            pixelCanvas.append(addRow);
+            for(let c = 1; c <= inputColumns.val(); c++){
+                const addColumn = $("<td></td>");
+                addRow.append(addColumn);
+            }
         }
     } else if (scale === decrement && axis === inputRows){
         row.remove();
     } else if (scale === increment && axis === inputColumns){
         pixelCanvas.children().append(column);
     } else {
-       column.remove();
+        column.remove();
     }
 }
 
