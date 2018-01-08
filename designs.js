@@ -91,6 +91,18 @@ function decrement (i, val){
     return +val -1;
 }
 
+////////////// difference between input and actual table
+let gridRows = inputRows.val();
+let currentGridRows = 0;
+let rowsDiff = gridRows - currentGridRows;
+
+function countRows(){
+    currentGridRows = pixelCanvas.children('tr').length;
+    console.log(currentGridRows);
+    console.log(rowsDiff);
+}
+
+
 // This with test = axis.val(); executed in gridBuilder, means the value of button and input are now always the same. maybe add btn param to make it work for all four buttons
 let test = addRowBtn.val();
 
@@ -99,7 +111,8 @@ function gridBuilder (scale, axis){
     axis.val(scale);
     buildGrid(scale, axis);
     test = axis.val();
-    console.log(test);
+    countRows();
+    // console.log(test);
 }
 
 ////////////////////////////////////////////////////
