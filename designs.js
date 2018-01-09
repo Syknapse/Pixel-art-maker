@@ -96,23 +96,23 @@ function decrement (i, val){
 let rowsDiff = 0;
 let columnsDiff = 0;
 function countRows(){
-    let currentGridRows = 0;
     let gridRows = inputRows.val();
+    let currentGridRows = 0;
     currentGridRows = pixelCanvas.children('tr').length;
     rowsDiff = gridRows - currentGridRows;
-    console.log(currentGridRows);
-    console.log(gridRows);
-    console.log(rowsDiff);
-}
-//////////////
-function countColumns(){
-    let currentGridColumns = 0;
-    let gridColumns = inputColumns.val();
-    currentGridColumns = pixelCanvas.children('td').length; //////////////
-    columnDiff = gridColumns - currentGridColumns;
     // console.log(currentGridRows);
     // console.log(gridRows);
     // console.log(rowsDiff);
+}
+//////////////
+function countColumns(){
+    let gridColumns = inputColumns.val();
+    let currentGridColumns = 0;
+    currentGridColumns = pixelCanvas.children().first().children().length;
+    columnsDiff = gridColumns - currentGridColumns;
+    // console.log(currentGridColumns);
+    // console.log(gridColumns);
+    // console.log(columnsDiff);
 }
 
 
@@ -132,6 +132,7 @@ function gridBuilder (scale, axis){
 // the main issue is that inputting numbers manually puts the Btns out of sync with the actual input
 function buildGrid(scale, axis){
     countRows();
+    countColumns()
     if (scale === increment && axis === inputRows){
         for (let r = 1; r <= rowsDiff; r++){
             const addRow = $("<tr></tr>");
@@ -142,11 +143,13 @@ function buildGrid(scale, axis){
             }
         }
     } else if (scale === decrement && axis === inputRows){
-        row.remove();
+        pixelCanvas.children().last().remove();
     } else if (scale === increment && axis === inputColumns){
         pixelCanvas.children().append(column);
     } else {
-        column.remove();
+        $('tr').each(function(){
+            $('td').last().remove(); ///////////////////////
+        });
     }
 }
 
@@ -160,7 +163,14 @@ removeRowBtn.click(function(){
 });
 
 addColumnBtn.click(function(){
-    gridBuilder(increment, inputColumns);
+    //Checks if there are rows already created
+    if ( pixelCanvas.children('tr').length ) {
+        gridBuilder(increment, inputColumns);
+    } else {
+        // Creates rows
+       buildGrid(increment, inputRows);
+        gridBuilder(increment, inputColumns);
+    }
 });
 
 removeColumnBtn.click(function(){
