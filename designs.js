@@ -148,7 +148,7 @@ function buildGrid(scale, axis){
         pixelCanvas.children().append(column);
     } else {
         $('tr').each(function(){
-            $('td').last().remove(); ///////////////////////
+            $(this).find("td:last").remove();
         });
     }
 }
