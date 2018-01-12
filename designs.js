@@ -55,28 +55,9 @@ function makeGrid(){
 submitGridSize.click(makeGrid);
 
 // GRID BUILDER
-
 //////////////////////////////////////
-/*
-// Option with disabled typing in number input
-function reset(){
-    clearGrid();
-    colorInput.val('#000000');
-    selectedColor = colorInput.val();
-    inputRows.val(10);
-    inputColumns.val(10);
-    makeGrid();
-}
 
-// Start with a 10x10 grid
-makeGrid();
-// Disable inputting numbers
-$("[type='number']").keypress(function (evt) {
-    evt.preventDefault();
-}); */
-
-
-// Add/remove row/column
+// Add/remove row/column buttons
 const addRowBtn = $('#add-row');
 const removeRowBtn = $('#remove-row');
 const addColumnBtn = $('#add-column');
@@ -91,101 +72,142 @@ function decrement (i, val){
     return +val -1;
 }
 
-////////////// difference between input and actual table
-// This function executed at the start of buildGrid finds the difference between the number of rows indicated in the input vs the actual current number of rows just before building. rowsDiff is then used as the number of loops to build. in effect it adds a single row when they match or as many as needed when they don't
+// Store difference between current rows/columns on screen and the input value
 let rowsDiff = 0;
 let columnsDiff = 0;
+let currentGridRows = 0;
+let currentGridColumns = 0;
+
 function countRows(){
     let gridRows = inputRows.val();
-    let currentGridRows = 0;
     currentGridRows = pixelCanvas.children('tr').length;
     rowsDiff = Math.abs(gridRows - currentGridRows);
-    // console.log(currentGridRows);
-    // console.log(gridRows);
-    // console.log(rowsDiff);
 }
-//////////////
+
 function countColumns(){
     let gridColumns = inputColumns.val();
-    let currentGridColumns = 0;
     currentGridColumns = pixelCanvas.children().first().children().length;
     columnsDiff = Math.abs(gridColumns - currentGridColumns);
-    // console.log(currentGridColumns);
-    // console.log(gridColumns);
-    // console.log(columnsDiff);
 }
 
-
-// This with test = axis.val(); executed in gridBuilder, means the value of button and input are now always the same. maybe add btn param to make it work for all four buttons
+// Add/remove rows/columns buttons value
 let addRowBtnValue = addRowBtn.val();
 let removeRowBtnValue = removeRowBtn.val();
 let addColumnBtnValue = addColumnBtn.val();
 let removeColumnBtnValue = removeColumnBtn.val();
 
-// Build grid & update input. scale = increment or decrement. axis = row or column
+// Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
 function gridBuilder (scale, axis, btn){
     axis.val(scale);
     buildGrid(scale, axis);
     btn = axis.val();
-    // console.log(btn);
 }
 
-////////////////////////////////////////////////////
-// This function adds a row without resetting the grid (painting persists), adds a column (but doesn't appear if row=0), the remove function is not yet implemented
-// the main issue is that inputting numbers manually puts the Btns out of sync with the actual input
+// Functions to construct/eliminate rows/columns
+function constructRows(){
+    for (let r = 1; r <= rowsDiff; r++){
+        const addRow = $("<tr></tr>");
+        pixelCanvas.append(addRow);
+        for(let c = 1; c <= inputColumns.val(); c++){
+            const addColumn = $("<td></td>");
+            addRow.append(addColumn);
+        }
+    }
+}
+
+function eliminateRows(){
+    for (let r = 1; r <= rowsDiff; r++){
+        pixelCanvas.children().last().remove();
+    }
+}
+
+function constructColumns(){
+    for (let c = 1; c <= columnsDiff; c++){
+        pixelCanvas.children().append(column);
+    }
+}
+
+function eliminateColumns(){
+    for (let c = 1; c <= columnsDiff; c++){
+        $('tr').each(function(){
+            $(this).find("td:last").remove();
+        });
+    }
+}
+
+// Build grid, based on event, and difference between current grid and input value
 function buildGrid(scale, axis){
     countRows();
     countColumns()
     if (scale === increment && axis === inputRows){
-        for (let r = 1; r <= rowsDiff; r++){
-            const addRow = $("<tr></tr>");
-            pixelCanvas.append(addRow);
-            for(let c = 1; c <= inputColumns.val(); c++){
-                const addColumn = $("<td></td>");
-                addRow.append(addColumn);
-            }
+        if (currentGridRows < inputRows.val()){
+            constructRows();
+        } else {
+            eliminateRows();
         }
     } else if (scale === decrement && axis === inputRows){
-        for (let r = 1; r <= rowsDiff; r++){
-            pixelCanvas.children().last().remove();
-        }
+            if (currentGridRows > inputRows.val()){
+                eliminateRows();
+            } else {
+                constructRows();
+            }
     } else if (scale === increment && axis === inputColumns){
-        for (let c = 1; c <= columnsDiff; c++){
-            pixelCanvas.children().append(column);
+        if (currentGridColumns < inputColumns.val()){
+            constructColumns();
+        } else {
+            eliminateColumns();
         }
     } else {
-        for (let c = 1; c <= columnsDiff; c++){
-            $('tr').each(function(){
-                $(this).find("td:last").remove();
-            });
-        }
+            if (currentGridColumns > inputColumns.val()){
+                eliminateColumns();
+            } else {
+                constructColumns();
+            }
     }
 }
 
-// Grid-building buttons event listeners
-addRowBtn.click(function(){
-    gridBuilder(increment, inputRows, addRowBtnValue);
+// listen to change in input and update btn value
+inputRows.on('keyup mouseup', function(){
+    addRowBtnValue = inputRows.val();
+    removeRowBtnValue = inputRows.val();
 });
 
-removeRowBtn.click(function(){
+inputColumns.on('keyup mouseup', function(){
+    addColumnBtnValue = inputColumns.val();
+    removeColumnBtnValue = inputColumns.val();
+});
+
+// Grid-building buttons event listeners
+let clickAndHold;
+
+addRowBtn.mousedown(function(){
+    clickAndHold = setInterval(function(){ gridBuilder(increment, inputRows, addRowBtnValue); }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
+});
+
+removeRowBtn.mousedown(function(){
     // builds missing rows before removing
     buildGrid(increment, inputRows);
-    gridBuilder(decrement, inputRows, removeRowBtnValue);
+    clickAndHold = setInterval(function(){ gridBuilder(decrement, inputRows, removeRowBtnValue); }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
 });
 
-addColumnBtn.click(function(){
-    //Checks if there are rows already created
-    if ( pixelCanvas.children('tr').length ) {
-        gridBuilder(increment, inputColumns, addColumnBtnValue);
-    } else {
-        // Creates rows
-       buildGrid(increment, inputRows);
-        gridBuilder(increment, inputColumns, addColumnBtnValue);
-    }
+addColumnBtn.mousedown(function(){
+    // builds grid if it's not there yet
+    buildGrid(increment, inputRows);
+    clickAndHold = setInterval(function(){ gridBuilder(increment, inputColumns, addColumnBtnValue); }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
 });
 
-removeColumnBtn.click(function(){
-    gridBuilder(decrement, inputColumns, removeColumnBtnValue);
+removeColumnBtn.mousedown(function(){
+    // builds grid before removing column
+    buildGrid(increment, inputRows);
+    clickAndHold = setInterval(function(){ gridBuilder(decrement, inputColumns, removeColumnBtnValue); }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
 });
 
 // DRAW
