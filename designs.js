@@ -55,13 +55,110 @@ function makeGrid(){
 submitGridSize.click(makeGrid);
 
 // GRID BUILDER
-//////////////////////////////////////
+////////////////////////////////////////////////
 
 // Add/remove row/column buttons
 const addRowBtn = $('#add-row');
 const removeRowBtn = $('#remove-row');
 const addColumnBtn = $('#add-column');
 const removeColumnBtn = $('#remove-column');
+
+// Event listeners for grid-building buttons
+let clickAndHold;
+
+addRowBtn.mousedown(function(){
+    // Allow single click or click and hold to add multiple
+    clickAndHold = setInterval(function(){
+        gridBuilder(increment, inputRows, addRowBtnValue);
+    }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
+});
+
+removeRowBtn.mousedown(function(){
+    // builds missing rows before removing
+    buildGrid(increment, inputRows);
+    clickAndHold = setInterval(function(){
+        gridBuilder(decrement, inputRows, removeRowBtnValue);
+    }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
+});
+
+addColumnBtn.mousedown(function(){
+    // builds grid if it's not there yet
+    buildGrid(increment, inputRows);
+    clickAndHold = setInterval(function(){
+        gridBuilder(increment, inputColumns, addColumnBtnValue);
+    }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
+});
+
+removeColumnBtn.mousedown(function(){
+    // builds grid before removing column
+    buildGrid(increment, inputRows);
+    clickAndHold = setInterval(function(){
+        gridBuilder(decrement, inputColumns, removeColumnBtnValue);
+    }, 80);
+}).mouseup(function(){
+    clearInterval(clickAndHold);
+});
+
+// Add/remove rows/columns buttons value
+let addRowBtnValue = addRowBtn.val();
+let removeRowBtnValue = removeRowBtn.val();
+let addColumnBtnValue = addColumnBtn.val();
+let removeColumnBtnValue = removeColumnBtn.val();
+
+// listen to change in input and update btn value
+inputRows.on('keyup mouseup', function(){
+    addRowBtnValue = inputRows.val();
+    removeRowBtnValue = inputRows.val();
+});
+
+inputColumns.on('keyup mouseup', function(){
+    addColumnBtnValue = inputColumns.val();
+    removeColumnBtnValue = inputColumns.val();
+});
+
+// Listen to enter key on input and construct grid
+inputRows.keypress(function(event){
+    const key = (event.keyCode ? event.keyCode : event.which);
+    if (key == '13'){
+        countRows();
+        countColumns()
+        if (currentGridRows < inputRows.val()){
+            constructRows();
+        } else {
+            eliminateRows();
+        }
+    }
+});
+
+inputColumns.keypress(function(event){
+    const key = (event.keyCode ? event.keyCode : event.which);
+    if (key == '13'){
+        countRows();
+        countColumns()
+        if (currentGridColumns < inputColumns.val()){
+            if (currentGridColumns == 0){
+                buildGrid(increment, inputRows);
+            } else {
+                constructColumns();
+            }
+        } else {
+            eliminateColumns();
+        }
+    }
+});
+
+// Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
+function gridBuilder (scale, axis, btn){
+    axis.val(scale);
+    buildGrid(scale, axis);
+    btn = axis.val();
+}
 
 // increment/decrement row and column input
 function increment (i, val){
@@ -70,6 +167,39 @@ function increment (i, val){
 
 function decrement (i, val){
     return +val -1;
+}
+
+// Build grid, based on event, and difference between current grid and input value
+function buildGrid(scale, axis){
+    countRows();
+    countColumns()
+    // Find out which button triggered the function
+    if (scale === increment && axis === inputRows){
+        // Compare input to current grid to add or remove accordingly
+        if (currentGridRows < inputRows.val()){
+            constructRows();
+        } else {
+            eliminateRows();
+        }
+    } else if (scale === decrement && axis === inputRows){
+        if (currentGridRows > inputRows.val()){
+            eliminateRows();
+        } else {
+            constructRows();
+        }
+    } else if (scale === increment && axis === inputColumns){
+        if (currentGridColumns < inputColumns.val()){
+            constructColumns();
+        } else {
+            eliminateColumns();
+        }
+    } else {
+        if (currentGridColumns > inputColumns.val()){
+            eliminateColumns();
+        } else {
+            constructColumns();
+        }
+    }
 }
 
 // Store difference between current rows/columns on screen and the input value
@@ -88,19 +218,6 @@ function countColumns(){
     let gridColumns = inputColumns.val();
     currentGridColumns = pixelCanvas.children().first().children().length;
     columnsDiff = Math.abs(gridColumns - currentGridColumns);
-}
-
-// Add/remove rows/columns buttons value
-let addRowBtnValue = addRowBtn.val();
-let removeRowBtnValue = removeRowBtn.val();
-let addColumnBtnValue = addColumnBtn.val();
-let removeColumnBtnValue = removeColumnBtn.val();
-
-// Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
-function gridBuilder (scale, axis, btn){
-    axis.val(scale);
-    buildGrid(scale, axis);
-    btn = axis.val();
 }
 
 // Functions to construct/eliminate rows/columns
@@ -135,80 +252,7 @@ function eliminateColumns(){
     }
 }
 
-// Build grid, based on event, and difference between current grid and input value
-function buildGrid(scale, axis){
-    countRows();
-    countColumns()
-    if (scale === increment && axis === inputRows){
-        if (currentGridRows < inputRows.val()){
-            constructRows();
-        } else {
-            eliminateRows();
-        }
-    } else if (scale === decrement && axis === inputRows){
-            if (currentGridRows > inputRows.val()){
-                eliminateRows();
-            } else {
-                constructRows();
-            }
-    } else if (scale === increment && axis === inputColumns){
-        if (currentGridColumns < inputColumns.val()){
-            constructColumns();
-        } else {
-            eliminateColumns();
-        }
-    } else {
-            if (currentGridColumns > inputColumns.val()){
-                eliminateColumns();
-            } else {
-                constructColumns();
-            }
-    }
-}
-
-// listen to change in input and update btn value
-inputRows.on('keyup mouseup', function(){
-    addRowBtnValue = inputRows.val();
-    removeRowBtnValue = inputRows.val();
-});
-
-inputColumns.on('keyup mouseup', function(){
-    addColumnBtnValue = inputColumns.val();
-    removeColumnBtnValue = inputColumns.val();
-});
-
-// Grid-building buttons event listeners
-let clickAndHold;
-
-addRowBtn.mousedown(function(){
-    clickAndHold = setInterval(function(){ gridBuilder(increment, inputRows, addRowBtnValue); }, 80);
-}).mouseup(function(){
-    clearInterval(clickAndHold);
-});
-
-removeRowBtn.mousedown(function(){
-    // builds missing rows before removing
-    buildGrid(increment, inputRows);
-    clickAndHold = setInterval(function(){ gridBuilder(decrement, inputRows, removeRowBtnValue); }, 80);
-}).mouseup(function(){
-    clearInterval(clickAndHold);
-});
-
-addColumnBtn.mousedown(function(){
-    // builds grid if it's not there yet
-    buildGrid(increment, inputRows);
-    clickAndHold = setInterval(function(){ gridBuilder(increment, inputColumns, addColumnBtnValue); }, 80);
-}).mouseup(function(){
-    clearInterval(clickAndHold);
-});
-
-removeColumnBtn.mousedown(function(){
-    // builds grid before removing column
-    buildGrid(increment, inputRows);
-    clickAndHold = setInterval(function(){ gridBuilder(decrement, inputColumns, removeColumnBtnValue); }, 80);
-}).mouseup(function(){
-    clearInterval(clickAndHold);
-});
+//////////////////////////////////////////////// ^ GRID BUILDER ^
 
 // DRAW
 // Grab color input on change
@@ -249,12 +293,12 @@ function drag () {
         }
     })
     .on('mousedown', function(){
-            event.preventDefault();
-            mouseIsDown = true;
-        })
-        .on('mouseup', function(){
-            mouseIsDown = false;
-        });
+        event.preventDefault();
+        mouseIsDown = true;
+    })
+    .on('mouseup', function(){
+        mouseIsDown = false;
+    });
     pixelCanvas.on('mouseleave', function(){
         mouseIsDown = false;
     });
@@ -262,8 +306,8 @@ function drag () {
 
 // Event listener click delegated
 pixelCanvas
-    .on('click', 'td', draw)
-    .on('mousedown', 'td', drag);
+.on('click', 'td', draw)
+.on('mousedown', 'td', drag);
 
 
 
