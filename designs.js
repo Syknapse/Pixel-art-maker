@@ -1,9 +1,9 @@
 // Select size input
-const submitGridSize = $('#submit-grid');
+const createGridBtn = $('#submit-grid');
 // Select Reset button
 const resetBtn = $('#reset');
 // Select Clear Grid button
-clearBtn = $('#clear-grid')
+const clearBtn = $('#clear-grid')
 // Select height and width input
 const inputRows = $('#input-rows');
 const inputColumns = $('#input-columns');
@@ -130,7 +130,7 @@ inputColumns.keypress(function(event){
 });
 
 // Create grid button
-submitGridSize.click(makeGrid);
+createGridBtn.click(makeGrid);
 
 function makeGrid(){
     countRows();
@@ -163,29 +163,12 @@ function buildGrid(scale, axis){
     if (scale === increment && axis === inputRows){
         // Compare input to current grid to add or remove accordingly
         currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
-        /* if (currentGridRows < inputRows.val()){
-            constructRows();
-        } else {
-            eliminateRows();
-        } */
     } else if (scale === decrement && axis === inputRows){
-        if (currentGridRows > inputRows.val()){
-            eliminateRows();
-        } else {
-            constructRows();
-        }
+        currentGridRows > inputRows.val() ? eliminateRows() : constructRows();
     } else if (scale === increment && axis === inputColumns){
-        if (currentGridColumns < inputColumns.val()){
-            constructColumns();
-        } else {
-            eliminateColumns();
-        }
+        currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
     } else {
-        if (currentGridColumns > inputColumns.val()){
-            eliminateColumns();
-        } else {
-            constructColumns();
-        }
+        currentGridColumns > inputColumns.val() ? eliminateColumns() : constructColumns();
     }
 }
 
@@ -239,9 +222,11 @@ function eliminateColumns(){
     }
 }
 
-//////////////////////////////////////////////// ^ GRID BUILDER ^
+//////////////////////////////////////////////// ^ GRID ^
 
 // DRAW
+////////////////////////////////////////////////
+
 // Grab color input on change
 colorInput.change(function(){
     selectedColor = $(this).val();
