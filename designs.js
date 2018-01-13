@@ -9,8 +9,6 @@ const inputRows = $('#input-rows');
 const inputColumns = $('#input-columns');
 // Select color input
 const colorInput = $('#color-picker');
-// Store selected color
-let selectedColor = colorInput.val();
 // Select table
 const pixelCanvas = $('#pixel-canvas');
 // Rows and columns
@@ -20,7 +18,7 @@ const column = '<td></td>';
 // RESET page
 function reset(){
     removeGrid();
-    colorInput.val('#000000');
+    colorInput.val('#4286f4');
     selectedColor = colorInput.val();
     inputRows.val(10);
     inputColumns.val(10);
@@ -227,27 +225,28 @@ function eliminateColumns(){
 // DRAW
 ////////////////////////////////////////////////
 
-// Grab color input on change
-colorInput.change(function(){
-    selectedColor = $(this).val();
-});
+let defaultColor = colorInput.val('#4286f4');
 
-// draw/erase function
-function draw (){
-    let clicks = $(this).data('clicks');
-    if (!clicks){
-        // Change background color of cell
-        $(this).css('background-color', selectedColor);
-    } else {
-        // On second click return color to default (erase)
-        $(this).css('background-color', '');
-    }
-    // Fire `if` event on odd clicks
-    $(this).data('clicks', !clicks);
-}
+// Convert hex to rgb
+function hexToRgb(hex){
+    hex = hex.replace('#','');
+    r = parseInt(hex.substring(0, hex.length/3), 16);
+    g = parseInt(hex.substring(hex.length/3, 2*hex.length/3), 16);
+    b = parseInt(hex.substring(2*hex.length/3, 3*hex.length/3), 16);
+
+    result = `rgb(${r}, ${g}, ${b})`;
+    return result;
+};
+
+// Color on single click. If same color erase
+function draw(){
+    let selectedColor = colorInput.val();
+    $(this).css("background-color") == hexToRgb(selectedColor) ?
+    $(this).css('background-color', '') : $(this).css('background-color', selectedColor);
+};
 
 // click and drag draw/erase function
-function drag () {
+function drag(){
     let mouseIsDown = true;
     let clicks = $(this).data('clicks');
     $('td')
@@ -255,7 +254,7 @@ function drag () {
         if (mouseIsDown){
             if (!clicks){
                 // Change background color of cell
-                $(this).css('backgroundColor', selectedColor);
+                $(this).css('background-color', colorInput.val());
             } else {
                 // On second click return color to default (erase)
                 $(this).css('background-color', '');
@@ -278,53 +277,6 @@ function drag () {
 
 // Event listener click delegated
 pixelCanvas
-.on('click', 'td', draw)
+.on('mousedown', 'td', draw)
 .on('mousedown', 'td', drag);
-
-
-
-// convert rgb to hex on click
-/* let thisHex = pixelCanvas.on('click', 'td', function(){
-    rgbToHex( $(this).css('background-color') );
-
-});
-function rgbToHex(rgb){
-    rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-    return (rgb && rgb.length === 4) ? "#" +
-     ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-     ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-     ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
-} */
-
-
-// This can log the individual cell clicked, as well as the start and end cell on drag. It serves no purpose in this project any longer. But I made it, and it works, so it's staying here for now!!
-
-/* pixelCanvas.on('mousedown', 'td', function(){
-                let startCell = currentCell(this);
-                event.preventDefault();
-                console.log(startCell);
-            })
-            .on('mouseup', 'td', function(){
-                let endCell = currentCell(this);
-                console.log(endCell);
-            });
-
-function currentCell (current){
-    let columnIndex  = current.cellIndex;
-    let rowIndex = current.parentNode.rowIndex;
-    let cellIndex = `${rowIndex}-${columnIndex}`;
-    return cellIndex;
-}
-*/
-
-
-// Extra features: Reset and/or clear grid
-// Extra features: Screenshot
-// Extra features: Tweet creation/ project
-// Extra features: Transitions grid create
-// Extra features: Responsive
-// Extra features: Other
-
-
-
 
