@@ -27,6 +27,10 @@ function reset(){
 
 resetBtn.click(reset);
 
+pixelCanvas.contextmenu(function() {
+    return false;
+});
+
 // GRID
 ////////////////////////////////////////////////
 
@@ -249,8 +253,8 @@ function draw(){
 function drag(){
     let mouseIsDown = true;
     let clicks = $(this).data('clicks');
-    $('td')
-    .on('mouseleave', function(){
+    pixelCanvas
+    .on('mouseleave', 'td', function(){
         if (mouseIsDown){
             if (!clicks){
                 // Change background color of cell
@@ -263,11 +267,11 @@ function drag(){
             $(this).data('clicks', !clicks);
         }
     })
-    .on('mousedown', function(){
+    .on('mousedown', 'td', function(){
         event.preventDefault();
         mouseIsDown = true;
     })
-    .on('mouseup', function(){
+    .on('mouseup', 'td', function(){
         mouseIsDown = false;
     });
     pixelCanvas.on('mouseleave', function(){
