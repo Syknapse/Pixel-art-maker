@@ -2,6 +2,8 @@
 const submitGridSize = $('#submit-grid');
 // Select Reset button
 const resetBtn = $('#reset');
+// Select Clear Grid button
+clearBtn = $('#clear-grid')
 // Select height and width input
 const inputRows = $('#input-rows');
 const inputColumns = $('#input-columns');
@@ -23,14 +25,16 @@ function reset(){
     inputRows.val(10);
     inputColumns.val(10);
 }
-// Event listener Reset page
+
 resetBtn.click(reset);
 
 // GRID
-// Clear grid function
+// Clear grid
 function clearGrid(){
     pixelCanvas.children().remove();
 }
+
+clearBtn.click(clearGrid);
 
 // Make grid
 function makeGrid(){
