@@ -19,47 +19,35 @@ const column = '<td></td>';
 
 // RESET page
 function reset(){
-    clearGrid();
+    removeGrid();
     colorInput.val('#000000');
     selectedColor = colorInput.val();
     inputRows.val(10);
     inputColumns.val(10);
+    currentGridRows = 0;
 }
 
 resetBtn.click(reset);
 
 // GRID
+////////////////////////////////////////////////
+
 // Clear grid
-function clearGrid(){
+function removeGrid(){
     pixelCanvas.children().remove();
+}
+
+function clearGrid(){
+    if (currentGridRows > 0){
+        removeGrid();
+        makeGrid();
+    }
 }
 
 clearBtn.click(clearGrid);
 
-// Make grid
-function makeGrid(){
-    clearGrid();
-    // Grab size value
-    let gridRows = inputRows.val();
-    let gridColumns = inputColumns.val();
-    // Append to table if input is 150 or less
-    if (gridRows <= 150 && gridColumns <= 150){
-        // Create rows
-        for(let r = 1; r <= gridRows; r++){
-            pixelCanvas.append(row);
-        }
-        // Create columns
-        for(let c = 1; c <= gridColumns; c++){
-            pixelCanvas.children().append(column);
-        }
-    }
-}
-
-// Event listener make new grid on click
-submitGridSize.click(makeGrid);
-
 // GRID BUILDER
-////////////////////////////////////////////////
+////////////////////
 
 // Add/remove row/column buttons
 const addRowBtn = $('#add-row');
@@ -130,32 +118,26 @@ inputColumns.on('keyup mouseup', function(){
 inputRows.keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
     if (key == '13'){
-        countRows();
-        countColumns()
-        if (currentGridRows < inputRows.val()){
-            constructRows();
-        } else {
-            eliminateRows();
-        }
+        makeGrid();
     }
 });
 
 inputColumns.keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
     if (key == '13'){
-        countRows();
-        countColumns()
-        if (currentGridColumns < inputColumns.val()){
-            if (currentGridColumns == 0){
-                buildGrid(increment, inputRows);
-            } else {
-                constructColumns();
-            }
-        } else {
-            eliminateColumns();
-        }
+        makeGrid();
     }
 });
+
+// Create grid button
+submitGridSize.click(makeGrid);
+
+function makeGrid(){
+    countRows();
+    countColumns();
+    buildGrid(increment, inputRows);
+    buildGrid(increment, inputColumns);
+}
 
 // Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
 function gridBuilder (scale, axis, btn){
@@ -180,11 +162,12 @@ function buildGrid(scale, axis){
     // Find out which button triggered the function
     if (scale === increment && axis === inputRows){
         // Compare input to current grid to add or remove accordingly
-        if (currentGridRows < inputRows.val()){
+        currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
+        /* if (currentGridRows < inputRows.val()){
             constructRows();
         } else {
             eliminateRows();
-        }
+        } */
     } else if (scale === decrement && axis === inputRows){
         if (currentGridRows > inputRows.val()){
             eliminateRows();
