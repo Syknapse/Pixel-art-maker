@@ -159,8 +159,10 @@ function decrement (i, val){
 
 // Build grid, based on event, and difference between current grid and input value
 function buildGrid(scale, axis){
+    validateRowInput();
+    validateColumnInput();
     countRows();
-    countColumns()
+    countColumns();
     // Find out which button triggered the function
     if (scale === increment && axis === inputRows){
         // Compare input to current grid to add or remove accordingly
@@ -171,6 +173,23 @@ function buildGrid(scale, axis){
         currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
     } else {
         currentGridColumns > inputColumns.val() ? eliminateColumns() : constructColumns();
+    }
+}
+
+// Limit grid size 1-150. Prevent input of other values
+function validateRowInput(){
+    if (inputRows.val() < 1 ){
+        inputRows.val(1);
+    } else if (inputRows.val() > 150){
+        inputRows.val(150);
+    }
+}
+
+function validateColumnInput(){
+    if (inputColumns.val() < 1){
+        inputColumns.val(1);
+    } else if (inputColumns.val() > 150){
+        inputColumns.val(150);
     }
 }
 
