@@ -1,5 +1,5 @@
 // Select size input
-const createGridBtn = $('#submit-grid');
+const createGridBtn = $('#create-grid');
 // Select Reset button
 const resetBtn = $('#reset');
 // Select Clear Grid button
@@ -23,10 +23,13 @@ function reset(){
     inputRows.val(10);
     inputColumns.val(10);
     currentGridRows = 0;
+    inputRows.css('color', '');
+    inputColumns.css('color', '');
 }
 
 resetBtn.click(reset);
 
+// Disable context menu on grid
 pixelCanvas.contextmenu(function() {
     return false;
 });
@@ -65,7 +68,7 @@ addRowBtn.mousedown(function(){
     clickAndHold = setInterval(function(){
         gridBuilder(increment, inputRows, addRowBtnValue);
     }, 80);
-}).mouseup(function(){
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
@@ -75,7 +78,7 @@ removeRowBtn.mousedown(function(){
     clickAndHold = setInterval(function(){
         gridBuilder(decrement, inputRows, removeRowBtnValue);
     }, 80);
-}).mouseup(function(){
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
@@ -85,7 +88,7 @@ addColumnBtn.mousedown(function(){
     clickAndHold = setInterval(function(){
         gridBuilder(increment, inputColumns, addColumnBtnValue);
     }, 80);
-}).mouseup(function(){
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
@@ -95,7 +98,7 @@ removeColumnBtn.mousedown(function(){
     clickAndHold = setInterval(function(){
         gridBuilder(decrement, inputColumns, removeColumnBtnValue);
     }, 80);
-}).mouseup(function(){
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
@@ -105,13 +108,15 @@ let removeRowBtnValue = removeRowBtn.val();
 let addColumnBtnValue = addColumnBtn.val();
 let removeColumnBtnValue = removeColumnBtn.val();
 
-// listen to change in input and update btn value
+// listen to change in input: validate input, and update btn value,
 inputRows.on('keyup mouseup', function(){
+    validateRowInput();
     addRowBtnValue = inputRows.val();
     removeRowBtnValue = inputRows.val();
 });
 
 inputColumns.on('keyup mouseup', function(){
+    validateColumnInput();
     addColumnBtnValue = inputColumns.val();
     removeColumnBtnValue = inputColumns.val();
 });
@@ -121,6 +126,10 @@ inputRows.keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
     if (key == '13'){
         makeGrid();
+        // countRows();
+        // countColumns();
+        // currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
+        // currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
     }
 });
 
@@ -128,6 +137,10 @@ inputColumns.keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
     if (key == '13'){
         makeGrid();
+        // countRows();
+        // countColumns();
+        // currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
+        // currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
     }
 });
 
@@ -139,6 +152,8 @@ function makeGrid(){
     countColumns();
     buildGrid(increment, inputRows);
     buildGrid(increment, inputColumns);
+    // currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
+    // currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
 }
 
 // Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
@@ -176,12 +191,16 @@ function buildGrid(scale, axis){
     }
 }
 
-// Limit grid size 1-150. Prevent input of other values
+// Limit grid size 1-150. Prevent input of other values, give red number warning for min and max values,
 function validateRowInput(){
     if (inputRows.val() < 1 ){
         inputRows.val(1);
     } else if (inputRows.val() > 150){
         inputRows.val(150);
+    } else if (inputRows.val() == 1 || inputRows.val() == 150){
+        inputRows.css('color', 'red');
+    } else {
+        inputRows.css('color', '');
     }
 }
 
@@ -190,6 +209,10 @@ function validateColumnInput(){
         inputColumns.val(1);
     } else if (inputColumns.val() > 150){
         inputColumns.val(150);
+    } else if (inputColumns.val() == 1 || inputColumns.val() == 150){
+        inputColumns.css('color', 'red');
+    } else {
+        inputColumns.css('color', '');
     }
 }
 

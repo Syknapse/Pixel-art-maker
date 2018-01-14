@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Syk's Pixel Art</title>
-    <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Joti+One|Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
@@ -13,29 +13,26 @@
     <h1>Pixel Art Maker</h1>
 
     <div class="controls">
-        <h2>Build Your Grid</h2>
+        <button type="button" id="reset">Reset</button>
         <label class="builder"><div>Row</div>
             <button type="button" id="remove-row" value="10">-</button>
             <button type="button" id="add-row" value="10">+</button>
             <input type="number" id="input-rows" name="height" min="1" max="150" value="10">
-            <span class="validity"></span>
         </label>
 
         <label class="builder"><div>Column</div>
             <button type="button" id="remove-column" value="10">-</button>
             <button type="button" id="add-column" value="10">+</button>
             <input type="number" id="input-columns" name="width" min="1" max="150" value="10">
-            <span class="validity"></span>
         </label>
 
-        <button type="button" id="clear-grid">Clear Grid</button>
-        <button type="button" id="submit-grid">Create Grid</button>
-        <button type="button" id="reset">Reset</button>
+        <div class="builder">
+            <button type="button" id="clear-grid">Clear Grid</button>
+            <button type="button" id="create-grid">Create Grid</button>
+        </div>
 
-        <h2>Pick A Color</h2>
         <input type="color" id="color-picker">
 
-        <h2>Draw Something!</h2>
     </div>
 
     <table id="pixel-canvas"></table>
