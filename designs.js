@@ -43,6 +43,7 @@ function removeGrid(){
 }
 
 function clearGrid(){
+    countRows();
     if (currentGridRows > 0){
         removeGrid();
         makeGrid();
@@ -63,42 +64,42 @@ const removeColumnBtn = $('#remove-column');
 // Event listeners for grid-building buttons
 let clickAndHold;
 
-addRowBtn.mousedown(function(){
+addRowBtn.on('mousedown touchstart', function(){
     // Allow single click or click and hold to add multiple
     clickAndHold = setInterval(function(){
         gridBuilder(increment, inputRows, addRowBtnValue);
     }, 80);
-}).on('mouseup mouseleave', function(){
+}).on('mouseup mouseleave touchend', function(){
     clearInterval(clickAndHold);
 });
 
-removeRowBtn.mousedown(function(){
+removeRowBtn.on('mousedown touchstart', function(){
     // builds missing rows before removing
     buildGrid(increment, inputRows);
     clickAndHold = setInterval(function(){
         gridBuilder(decrement, inputRows, removeRowBtnValue);
     }, 80);
-}).on('mouseup mouseleave', function(){
+}).on('mouseup mouseleave touchend', function(){
     clearInterval(clickAndHold);
 });
 
-addColumnBtn.mousedown(function(){
+addColumnBtn.on('mousedown touchstart', function(){
     // builds grid if it's not there yet
     buildGrid(increment, inputRows);
     clickAndHold = setInterval(function(){
         gridBuilder(increment, inputColumns, addColumnBtnValue);
     }, 80);
-}).on('mouseup mouseleave', function(){
+}).on('mouseup mouseleave touchend', function(){
     clearInterval(clickAndHold);
 });
 
-removeColumnBtn.mousedown(function(){
+removeColumnBtn.on('mousedown touchstart', function(){
     // builds grid before removing column
     buildGrid(increment, inputRows);
     clickAndHold = setInterval(function(){
         gridBuilder(decrement, inputColumns, removeColumnBtnValue);
     }, 80);
-}).on('mouseup mouseleave', function(){
+}).on('mouseup mouseleave touchend', function(){
     clearInterval(clickAndHold);
 });
 
@@ -121,7 +122,7 @@ inputColumns.on('keyup mouseup', function(){
     removeColumnBtnValue = inputColumns.val();
 });
 
-// Listen to enter key on input and construct grid
+// Listen to focus out or enter key on input and build grid
 inputRows
 .focusout(function(){
     validateRowInput();
@@ -138,6 +139,7 @@ inputRows
 inputColumns
 .focusout(function(){
     validateColumnInput();
+    countColumns();
     if (currentGridColumns < 1){
         buildGrid(increment, inputRows);
     } else {
@@ -147,6 +149,7 @@ inputColumns
 .keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
     validateColumnInput();
+    countColumns();
     if (key == '13'){
         if (currentGridColumns < 1){
             buildGrid(increment, inputRows);
@@ -165,7 +168,8 @@ function makeGrid(){
     buildGrid(increment, inputRows);
 }
 
-// Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
+// Build grid, update input, & update btn value.
+// Param: scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
 function gridBuilder (scale, axis, btn){
     axis.val(scale);
     buildGrid(scale, axis);
@@ -200,7 +204,7 @@ function buildGrid(scale, axis){
     }
 }
 
-// Limit grid size 1-150. Prevent input of other values, change number color warning for min and max values,
+// Limit grid size 1-150. Prevent input of other values, change number color warning for min/max and invalid values,
 function validateRowInput(){
     if (inputRows.val() < 1 ){
         inputRows.val(1);
@@ -257,7 +261,7 @@ function countColumns(){
     columnsDiff = Math.abs(gridColumns - currentGridColumns);
 }
 
-// Functions to construct/eliminate rows/columns
+// Construct/eliminate rows/columns
 function constructRows(){
     for (let r = 1; r <= rowsDiff; r++){
         const addRow = $("<tr></tr>");

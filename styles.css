@@ -7,6 +7,7 @@ body {
     text-align: center;
     font-family: 'Joti One', 'Open Sans', sans-serif;
     border: 6px solid rgb(69, 62, 75);
+    margin: 0;
 }
 
 h1 {
