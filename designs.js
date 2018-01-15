@@ -108,39 +108,51 @@ let removeRowBtnValue = removeRowBtn.val();
 let addColumnBtnValue = addColumnBtn.val();
 let removeColumnBtnValue = removeColumnBtn.val();
 
-// listen to change in input: validate input, and update btn value,
+// listen to change in input: invalid input alert, and update btn value,
 inputRows.on('keyup mouseup', function(){
-    validateRowInput();
+    invalidRowInputAlert();
     addRowBtnValue = inputRows.val();
     removeRowBtnValue = inputRows.val();
 });
 
 inputColumns.on('keyup mouseup', function(){
-    validateColumnInput();
+    invalidColumnInputAlert();
     addColumnBtnValue = inputColumns.val();
     removeColumnBtnValue = inputColumns.val();
 });
 
 // Listen to enter key on input and construct grid
-inputRows.keypress(function(event){
+inputRows
+.focusout(function(){
+    validateRowInput();
+    buildGrid(increment, inputRows);
+})
+.keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
     if (key == '13'){
-        makeGrid();
-        // countRows();
-        // countColumns();
-        // currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
-        // currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
+        validateRowInput();
+        buildGrid(increment, inputRows);
     }
 });
 
-inputColumns.keypress(function(event){
+inputColumns
+.focusout(function(){
+    validateColumnInput();
+    if (currentGridColumns < 1){
+        buildGrid(increment, inputRows);
+    } else {
+        buildGrid(increment, inputColumns);
+    }
+})
+.keypress(function(event){
     const key = (event.keyCode ? event.keyCode : event.which);
+    validateColumnInput();
     if (key == '13'){
-        makeGrid();
-        // countRows();
-        // countColumns();
-        // currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
-        // currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
+        if (currentGridColumns < 1){
+            buildGrid(increment, inputRows);
+        } else {
+            buildGrid(increment, inputColumns);
+        }
     }
 });
 
@@ -151,9 +163,6 @@ function makeGrid(){
     countRows();
     countColumns();
     buildGrid(increment, inputRows);
-    buildGrid(increment, inputColumns);
-    // currentGridRows < inputRows.val() ? constructRows() : eliminateRows();
-    // currentGridColumns < inputColumns.val() ? constructColumns() : eliminateColumns();
 }
 
 // Build grid, update input, & update btn value. scale = increment or decrement. axis = row or column. btn = add/remove rows/columns buttons
@@ -191,14 +200,21 @@ function buildGrid(scale, axis){
     }
 }
 
-// Limit grid size 1-150. Prevent input of other values, give red number warning for min and max values,
+// Limit grid size 1-150. Prevent input of other values, change number color warning for min and max values,
 function validateRowInput(){
     if (inputRows.val() < 1 ){
         inputRows.val(1);
     } else if (inputRows.val() > 150){
         inputRows.val(150);
-    } else if (inputRows.val() == 1 || inputRows.val() == 150){
+    }
+    invalidRowInputAlert();
+}
+
+function invalidRowInputAlert(){
+    if (inputRows.val() < 1 || inputRows.val() > 150){
         inputRows.css('color', 'red');
+    } else if (inputRows.val() == 1 || inputRows.val() == 150){
+        inputRows.css('color', '#DBA70D');
     } else {
         inputRows.css('color', '');
     }
@@ -209,8 +225,15 @@ function validateColumnInput(){
         inputColumns.val(1);
     } else if (inputColumns.val() > 150){
         inputColumns.val(150);
-    } else if (inputColumns.val() == 1 || inputColumns.val() == 150){
+    }
+    invalidColumnInputAlert();
+}
+
+function invalidColumnInputAlert(){
+    if (inputColumns.val() < 1 || inputColumns.val() > 150){
         inputColumns.css('color', 'red');
+    } else if (inputColumns.val() == 1 || inputColumns.val() == 150){
+        inputColumns.css('color', '#DBA70D');
     } else {
         inputColumns.css('color', '');
     }
