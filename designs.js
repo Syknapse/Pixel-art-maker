@@ -64,42 +64,42 @@ const removeColumnBtn = $('#remove-column');
 // Event listeners for grid-building buttons
 let clickAndHold;
 
-addRowBtn.on('mousedown touchstart', function(){
+addRowBtn.on('touchstart mousedown', function(){
     // Allow single click or click and hold to add multiple
     clickAndHold = setInterval(function(){
         gridBuilder(increment, inputRows, addRowBtnValue);
     }, 80);
-}).on('mouseup mouseleave touchend', function(){
+}).on('touchend mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
-removeRowBtn.on('mousedown touchstart', function(){
+removeRowBtn.on('touchstart mousedown', function(){
     // builds missing rows before removing
     buildGrid(increment, inputRows);
     clickAndHold = setInterval(function(){
         gridBuilder(decrement, inputRows, removeRowBtnValue);
     }, 80);
-}).on('mouseup mouseleave touchend', function(){
+}).on('touchend mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
-addColumnBtn.on('mousedown touchstart', function(){
+addColumnBtn.on('touchstart mousedown', function(){
     // builds grid if it's not there yet
     buildGrid(increment, inputRows);
     clickAndHold = setInterval(function(){
         gridBuilder(increment, inputColumns, addColumnBtnValue);
     }, 80);
-}).on('mouseup mouseleave touchend', function(){
+}).on('touchend mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
-removeColumnBtn.on('mousedown touchstart', function(){
+removeColumnBtn.on('touchstart mousedown', function(){
     // builds grid before removing column
     buildGrid(increment, inputRows);
     clickAndHold = setInterval(function(){
         gridBuilder(decrement, inputColumns, removeColumnBtnValue);
     }, 80);
-}).on('mouseup mouseleave touchend', function(){
+}).on('touchend mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
