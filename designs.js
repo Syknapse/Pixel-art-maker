@@ -65,41 +65,61 @@ const removeColumnBtn = $('#remove-column');
 let clickAndHold;
 
 addRowBtn.on('touchstart mousedown', function(){
-    // Allow single click or click and hold to add multiple
-    clickAndHold = setInterval(function(){
+    // detect touch screen event
+    if (event.type === 'touchstart'){
         gridBuilder(increment, inputRows, addRowBtnValue);
-    }, 80);
-}).on('touchend mouseup mouseleave', function(){
+    } else {
+        // Allow single click or click and hold to add multiple
+        clickAndHold = setInterval(function(){
+            gridBuilder(increment, inputRows, addRowBtnValue);
+        }, 80);
+    }
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
 removeRowBtn.on('touchstart mousedown', function(){
-    // builds missing rows before removing
-    buildGrid(increment, inputRows);
-    clickAndHold = setInterval(function(){
+    if (event.type === 'touchstart'){
+        buildGrid(increment, inputRows);
         gridBuilder(decrement, inputRows, removeRowBtnValue);
-    }, 80);
-}).on('touchend mouseup mouseleave', function(){
+    } else {
+        // builds missing rows before removing
+        buildGrid(increment, inputRows);
+        clickAndHold = setInterval(function(){
+            gridBuilder(decrement, inputRows, removeRowBtnValue);
+        }, 80);
+    }
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
 addColumnBtn.on('touchstart mousedown', function(){
-    // builds grid if it's not there yet
-    buildGrid(increment, inputRows);
-    clickAndHold = setInterval(function(){
+    if (event.type === 'touchstart'){
+        buildGrid(increment, inputRows);
         gridBuilder(increment, inputColumns, addColumnBtnValue);
-    }, 80);
-}).on('touchend mouseup mouseleave', function(){
+    } else {
+        // builds grid if it's not there yet
+        buildGrid(increment, inputRows);
+        clickAndHold = setInterval(function(){
+            gridBuilder(increment, inputColumns, addColumnBtnValue);
+        }, 80);
+    }
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
 removeColumnBtn.on('touchstart mousedown', function(){
-    // builds grid before removing column
-    buildGrid(increment, inputRows);
-    clickAndHold = setInterval(function(){
+    if (event.type === 'touchstart'){
+        buildGrid(increment, inputRows);
         gridBuilder(decrement, inputColumns, removeColumnBtnValue);
-    }, 80);
-}).on('touchend mouseup mouseleave', function(){
+    } else {
+        // builds grid before removing column
+        buildGrid(increment, inputRows);
+        clickAndHold = setInterval(function(){
+            gridBuilder(decrement, inputColumns, removeColumnBtnValue);
+        }, 80);
+    }
+}).on('mouseup mouseleave', function(){
     clearInterval(clickAndHold);
 });
 
