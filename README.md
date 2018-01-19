@@ -21,7 +21,7 @@ After meeting the initial brief I decided to add a few more advanced features. M
 
 I gave myself the objective of making sure the **User Experience** remained top of my agenda as I worked and thus forced myself to implement the most intuitive solution without ever needing written instructions for the user, even if that meant a much more complex code.
 
-** Additional features I successfully implemented:**
+### Additional features I successfully implemented:
 
 + Color by clicking and by clicking and dragging.
 + Erase on second click, also works with drag.
